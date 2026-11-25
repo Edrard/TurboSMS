@@ -18,11 +18,43 @@ Add the repository and package to your application's `composer.json`:
     "repositories": [
         {"type": "git", "url": "https://github.com/Edrard/TurboSMS.git"}
     ],
-    "require": {"edrard/turbosms": "dev-main"}
+    "require": {"edrard/turbosms": "^1.0"}
 }
 ```
 
 Then run `composer update edrard/turbosms --with-all-dependencies`.
+
+Stable releases are tagged `v1.x.x` on `main`; applications should use `^1.0`
+instead of the moving `dev-main` branch. The repository configuration above also
+works when the package is not registered on Packagist. See [CHANGELOG](CHANGELOG.md).
+
+### Guzzle compatibility
+
+The library accepts `guzzlehttp/guzzle: ^7.17 || ^8.6`:
+
+| Application environment | Compatible dependency |
+| --- | --- |
+| PHP 7.2.5–7.3 | Guzzle 7.17+ |
+| PHP 7.4+ | Guzzle 7.17+ or 8.6+, depending on application constraints |
+
+Existing `Api`, `Message`, `Webhook` calls and result shapes are unchanged.
+Composer respects other packages that still require Guzzle 7; permitting Guzzle
+8 does not force all existing applications to upgrade their HTTP client.
+Guzzle 8.5.1 is outside the supported range; use the maintained 8.6+ line.
+
+The local library checkout pins `config.platform.php` to 7.2.5 and therefore
+resolves Guzzle 7 by default. To test Guzzle 8 in a disposable checkout, run:
+
+```bash
+composer config platform.php 8.5.0
+composer update --with "guzzlehttp/guzzle:^8.6" --with-all-dependencies
+composer check-platform-reqs
+composer test
+```
+
+Use an actual PHP 8.5 runtime for those commands; the Composer platform setting
+does not install PHP. In consuming applications set the platform to their real
+deployment target. Do not modify production lock files just to run this example.
 
 For a checkout of this library, run `composer update` to resolve dependencies and
 create a local lock file. `composer.lock` and `vendor/` remain ignored for this
@@ -434,6 +466,8 @@ An optional second constructor argument accepts a `GuzzleHttp\ClientInterface`
 for tests or integration. An injected client must not add automatic retries.
 GitHub Actions checks PHP 7.2, 7.4 and 8.2–8.6. Legacy versions are included to
 verify compatibility, not as a recommendation for production use.
+The matrix explicitly resolves both Guzzle 7 and 8 wherever supported (Guzzle 8
+requires PHP 7.4+), in addition to PSR logging compatibility checks.
 
 ## License
 

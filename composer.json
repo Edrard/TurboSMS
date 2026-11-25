@@ -9,7 +9,7 @@
         "php": ">=7.2.5",
         "ext-hash": "*",
         "ext-json": "*",
-        "guzzlehttp/guzzle": "^7.17",
+        "guzzlehttp/guzzle": "^7.17 || ^8.6",
         "psr/log": "^1.1 || ^2.0 || ^3.0"
     },
     "autoload": {

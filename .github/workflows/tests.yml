@@ -9,6 +9,10 @@ jobs:
       fail-fast: false
       matrix:
         php: ['7.2', '7.4', '8.2', '8.3', '8.4', '8.5', '8.6']
+        guzzle: ['^7.17', '^8.6']
+        exclude:
+          - php: '7.2'
+            guzzle: '^8.6'
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -17,7 +21,9 @@ jobs:
           tools: composer:v2
           coverage: none
       - run: composer validate --strict
-      - run: composer update --prefer-dist --no-interaction --no-plugins --no-scripts
+      - run: composer config platform.php "${{ matrix.php }}.0"
+        if: matrix.php != '7.2'
+      - run: composer update --with "guzzlehttp/guzzle:${{ matrix.guzzle }}" --prefer-dist --no-interaction --no-plugins --no-scripts
       - run: composer check-platform-reqs
       - run: composer audit
       - run: composer test
