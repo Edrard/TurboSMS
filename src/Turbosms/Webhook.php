@@ -187,9 +187,12 @@ class Webhook implements LoggerAwareInterface
         if (!is_string($value) || preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/D', $value) !== 1) {
             return false;
         }
-        // The historical alias also works with PHP 7.2's bundled timezone database.
-        $date = \DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $value, new \DateTimeZone('Europe/Kiev'));
-        return $date !== false && $date->format('Y-m-d H:i:s') === $value;
+        // Validate the provider's local wall-clock fields without interpreting a timezone.
+        // These strings are preserved unchanged; named timezone aliases vary across PHP builds.
+        return checkdate((int) substr($value, 5, 2), (int) substr($value, 8, 2), (int) substr($value, 0, 4)) &&
+            (int) substr($value, 11, 2) < 24 &&
+            (int) substr($value, 14, 2) < 60 &&
+            (int) substr($value, 17, 2) < 60;
     }
 
     private function inputFields(array $payload)

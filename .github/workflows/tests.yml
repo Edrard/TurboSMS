@@ -6,6 +6,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         php: ['7.2', '7.4', '8.2', '8.3', '8.4', '8.5', '8.6']
     steps:
@@ -23,6 +24,7 @@ jobs:
   logging-compatibility:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         psr-log: ['2.0.0', '3.0.2']
     steps:

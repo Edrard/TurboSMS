@@ -10,6 +10,41 @@ function webhookPayload($type = 'DLR_SMS_API', $data = null, $id = 'test-event-4
 }
 function webhook() { return new \edrard\Turbosms\Webhook('test-webhook-secret'); }
 
+foreach (array('2024-02-29 23:59:59', '2026-11-25 00:00:00', '2026-03-29 03:30:00', '2026-10-25 03:30:00') as $date) {
+    test('webhook wall-clock timestamp is retained without timezone interpretation: ' . $date, function () use ($date) {
+        $previous = date_default_timezone_get();
+        try {
+            foreach (array('UTC', 'Pacific/Honolulu') as $zone) {
+                date_default_timezone_set($zone);
+                $payload = webhookPayload();
+                $payload['date'] = $date;
+                $payload['data']['sent_date'] = $date;
+                $payload['data']['dlr_date'] = $date;
+                $event = webhook()->parse(json_encode($payload));
+                same($date, $event['date']);
+                same($date, $event['deliveries'][0]['sent']);
+                same($date, $event['deliveries'][0]['updated']);
+            }
+        } finally {
+            date_default_timezone_set($previous);
+        }
+    });
+}
+foreach (array('2025-02-29 10:00:00', '2026-04-31 10:00:00', '0000-01-01 00:00:00',
+    '2026-00-01 10:00:00', '2026-11-00 10:00:00', '2026-11-25 24:00:00',
+    '2026-11-25 10:60:00', '2026-11-25 10:00:60', '2026-11-25 1:00:00') as $date) {
+    test('invalid calendar or time fields are rejected in every webhook date: ' . $date, function () use ($date) {
+        foreach (array('date', 'sent_date', 'dlr_date') as $field) {
+            $payload = webhookPayload();
+            if ($field === 'date') { $payload['date'] = $date; }
+            else { $payload['data'][$field] = $date; }
+            raises(\edrard\Turbosms\Exception\InvalidWebhookException::class, function () use ($payload) {
+                webhook()->parse(json_encode($payload));
+            });
+        }
+    });
+}
+
 test('SMS JSON webhook verifies signature and produces a normalized delivery', function () {
     $payload = webhookPayload();
     same(array('id' => 'test-event-42', 'type' => 'DLR_SMS_API', 'date' => $payload['date'], 'try' => 1,
