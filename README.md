@@ -328,7 +328,7 @@ signatures raise `WebhookAuthenticationException`; other event types raise
 `UnsupportedWebhookException` (a subclass of `InvalidWebhookException`). Forms
 near PHP's input variable limit are rejected to avoid partial processing.
 
-See [the working SQLite inbox endpoint](examples/webhook.php) and
+See [the working SQLite inbox endpoint](docs/webhook-endpoint.php) and
 [the detailed webhook guide](docs/WEBHOOKS.uk.md) for environment configuration,
 Basic authentication, deduplication and optional loopback HTTP integration tests.
 The endpoint stores events atomically before acknowledgment; your application
@@ -449,6 +449,17 @@ transactional patterns, incoming-message/click webhooks and other API modules
 are not implemented.
 The optional second `sendMessage()` argument remains a relative API method path;
 changing it does not select a channel or enable another API module.
+
+## Local examples
+
+`examples/` is ignored by Git. The local `examples/exm.php` offers CLI preview,
+explicit sending, status lookup and balance commands. Preview makes no HTTP
+request; sending requires environment configuration and an explicit `send` command.
+Keep tokens in environment variables, not in the example source. Local example
+files are not included in a clean clone. Reusable code examples remain in this
+README and the guides. The public webhook endpoint source is
+[docs/webhook-endpoint.php](docs/webhook-endpoint.php); copy it to
+`examples/webhook.php` before running the optional endpoint integration test.
 
 ## Tests
 

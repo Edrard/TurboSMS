@@ -170,8 +170,11 @@ ID повідомлення: для одного повідомлення мож
 
 ## Готовий приклад endpoint зі сховищем
 
-[examples/webhook.php](../examples/webhook.php) — робочий приклад для PHP
-із розширенням PDO SQLite. Він:
+[docs/webhook-endpoint.php](webhook-endpoint.php) — робочий приклад для PHP
+із розширенням PDO SQLite. Для локального використання скопіюй його до
+`examples/webhook.php`. Папка `examples/` ігнорується Git; після чистого checkout
+створи її та скопіюй endpoint із `docs/` перед запуском інтеграційного тесту.
+Він:
 
 - приймає лише POST, перевіряє підпис, формат і розмір;
 - підтримує необов'язкову HTTP Basic authentication;
