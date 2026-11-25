@@ -1,0 +1,38 @@
+name: Tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.2', '7.4', '8.2', '8.3', '8.4', '8.5', '8.6']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: none
+      - run: composer validate --strict
+      - run: composer update --prefer-dist --no-interaction --no-plugins --no-scripts
+      - run: composer check-platform-reqs
+      - run: composer audit
+      - run: composer test
+  logging-compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        psr-log: ['2.0.0', '3.0.2']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+      - run: composer config platform.php 8.4.0
+      - run: composer update --with "psr/log:${{ matrix.psr-log }}" --prefer-dist --no-interaction --no-plugins --no-scripts
+      - run: composer check-platform-reqs
+      - run: composer test

@@ -1,20 +1,20 @@
 {
     "name": "edrard/turbosms",
-    "description": "This package send notificatiob using TurboSMS HTTP API",
+    "description": "A small SMS and Viber client for the TurboSMS HTTP API",
     "type": "library",
-    "homepage": "https://github.com/Edrard/mylog",
+    "homepage": "https://github.com/Edrard/TurboSMS",
     "license": "MIT",
-    "authors": [{
-        "name": "Edrard",
-        "email": "demonand@gmail.com"
-    }],
+    "authors": [{"name": "Edrard", "email": "demonand@gmail.com"}],
     "require": {
-        "php": ">=7.2",
-        "guzzlehttp/guzzle": "^7.0"
+        "php": ">=7.2.5",
+        "ext-hash": "*",
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^7.17",
+        "psr/log": "^1.1 || ^2.0 || ^3.0"
     },
     "autoload": {
-        "psr-4": {
-            "edrard\\Turbosms\\": "src/Turbosms"
-        }
-    }
+        "psr-4": {"edrard\\Turbosms\\": "src/Turbosms/"}
+    },
+    "scripts": {"test": "@php tests/run.php"},
+    "config": {"platform": {"php": "7.2.5"}, "sort-packages": true}
 }
